@@ -187,8 +187,7 @@
             
             <div class="tituloContainer">
                 <h2 id="tituloMusica"></h2>
-                <button id="btnPlayPause">Pausar</button>
-            </div>
+                <button id="btnPlayPause">Tocar</button> </div>
 
             <div id="passoViagem" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 20px;">
                 <p id="pViagem" style="font-size: 1.2em;">Enquanto curte a música, vamos fazer uma viagem rápida?!</p>
@@ -383,10 +382,9 @@
             }
 
 
-            // --- FUNÇÃO TOCARMUSICA (Passo 4) ---
+            // --- FUNÇÃO TOCARMUSICA (Passo 4) - MODIFICADA ---
             function tocarMusica(sent, art) {
                 
-                // --- ATENÇÃO: SUBSTITUA ESTES LINKS ---
                 const link_Feliz_HeJ   = "https://files.catbox.moe/7c10ba.mp3"; 
                 const link_Feliz_ZNeC  = "https://files.catbox.moe/ylc4t4.mp3"; 
                 const link_Feliz_GM    = "https://files.catbox.moe/6coejm.mp3"; 
@@ -408,14 +406,15 @@
                 };
                 
                 const musicaSelecionada = musicas[sent][art];
-                tituloMusica.innerText = musicaSelecionada.nomeCompleto; // Mostra nome completo na tela
-                artistaEscolhido = musicaSelecionada.nome; // Guarda nome simplificado para email
+                tituloMusica.innerText = musicaSelecionada.nomeCompleto; 
+                artistaEscolhido = musicaSelecionada.nome; 
 
                 btnPlayPause.style.display = "inline-block";
-                btnPlayPause.innerText = "Pausar";
+                btnPlayPause.innerText = "Tocar"; // Começa como Tocar
                 backgroundMusic.src = musicaSelecionada.url;
-                backgroundMusic.play()
-                    .catch(e => console.error("Erro ao tocar áudio:", e)); 
+                
+                // REMOVIDO: backgroundMusic.play() daqui
+                // .catch(e => console.error("Erro ao tocar áudio:", e)); 
 
                 mostrarPasso("passoFinal");
                 document.getElementById("passoViagem").style.display = "block";
@@ -423,12 +422,16 @@
             
             // --- LÓGICA DO BOTÃO PLAY/PAUSE ---
             btnPlayPause.onclick = function() {
+                 // Verifica se tem uma música carregada antes de tentar tocar/pausar
+                 if (!backgroundMusic.src) return; 
+
                 if (backgroundMusic.paused) {
-                    backgroundMusic.play();
-                    btnPlayPause.innerText = "Tocar";
+                    backgroundMusic.play().then(() => {
+                         btnPlayPause.innerText = "Pausar";
+                    }).catch(e => console.error("Erro ao tocar áudio:", e));
                 } else {
                     backgroundMusic.pause();
-                    btnPlayPause.innerText = "Pausar";
+                    btnPlayPause.innerText = "Tocar";
                 }
             };
 
@@ -508,6 +511,18 @@
                 tituloInicioViagem.style.display = "block";
                  if (mensagemFinalTextoElement) mensagemFinalTextoElement.style.display = 'none';
                  containerBtnFinalizar.style.display = "none";
+                 
+                 // TENTA INICIAR A MÚSICA AQUI (se houver uma selecionada)
+                 if (backgroundMusic.src && backgroundMusic.paused) { 
+                    backgroundMusic.play().then(() => {
+                         btnPlayPause.innerText = "Pausar";
+                    }).catch(e => { 
+                         console.error("Erro ao iniciar música no Início:", e);
+                         // Mesmo se falhar, o botão fica como "Tocar"
+                         btnPlayPause.innerText = "Tocar"; 
+                    });
+                 }
+                 
                 mostrarFoto(0); 
             }
 
@@ -517,6 +532,17 @@
                 btnInicio.disabled = true;
                 btnMeio.disabled = true;
                 btnFim.disabled = true;
+
+                 // TENTA INICIAR A MÚSICA AQUI (se houver uma selecionada)
+                 if (backgroundMusic.src && backgroundMusic.paused) {
+                    backgroundMusic.play().then(() => {
+                         btnPlayPause.innerText = "Pausar";
+                    }).catch(e => { 
+                         console.error("Erro ao iniciar música no Aviso:", e);
+                         btnPlayPause.innerText = "Tocar"; 
+                    });
+                 }
+
                 setTimeout(mostrarInicioViagem, 4500); 
             }
 
@@ -532,13 +558,6 @@
                     mensagem: mensagemDespedida
                 };
 
-                // Comentários da simulação foram removidos/comentados
-                // console.log("--- DADOS QUE SERIAM ENVIADOS POR EMAIL ---");
-                // console.log("Sentimento:", dadosParaEnviar.sentimento);
-                // console.log("Artista Escolhido:", dadosParaEnviar.artista);
-                // console.log("Mensagem Final:", dadosParaEnviar.mensagem);
-                // console.log("-----------------------------------------");
-                
                 // --- INTEGRAÇÃO REAL COM EMAILJS - ATIVADA ---
                 const templateParams = {
                     sentimento: dadosParaEnviar.sentimento,
@@ -553,12 +572,9 @@
                 emailjs.send(serviceID, templateID, templateParams)
                     .then(function(response) {
                        console.log('Email enviado com sucesso!', response.status, response.text);
-                       // Não informe o usuário, continue silenciosamente
                     }, function(error) {
                        console.error('Falha ao enviar email:', error);
-                       // Mesmo em caso de erro, não informe o usuário
                     });
-                // -----------------------------------------------------------------------------
             }
 
             // --- LÓGICA DOS PASSOS FINAIS ---
@@ -574,14 +590,14 @@
             };
 
             btnSemMensagem.onclick = function() {
-                 enviarEmailComDados("Fim, sem despedida"); // Envia os dados
+                 enviarEmailComDados("Fim, sem despedida"); 
                  mensagemFim.innerText = "Você fez sua escolha, chegamos ao fim.";
                  mostrarPasso('passoFim');
             };
 
             btnEnviarMensagem.onclick = function() {
                  const mensagemDigitada = campoMensagemDespedida.value || "Nenhuma mensagem escrita."; 
-                 enviarEmailComDados(mensagemDigitada); // Envia os dados
+                 enviarEmailComDados(mensagemDigitada); 
                  mensagemFim.innerText = "Chegamos ao fim.";
                  mostrarPasso('passoFim');
             };
