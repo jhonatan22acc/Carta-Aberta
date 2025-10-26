@@ -187,7 +187,8 @@
             
             <div class="tituloContainer">
                 <h2 id="tituloMusica"></h2>
-                <button id="btnPlayPause">Tocar</button> </div>
+                <button id="btnPlayPause">Tocar</button> 
+            </div>
 
             <div id="passoViagem" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 20px;">
                 <p id="pViagem" style="font-size: 1.2em;">Enquanto curte a música, vamos fazer uma viagem rápida?!</p>
@@ -202,7 +203,8 @@
                 <h3 id="tituloInicioViagem" style="font-weight: bold;">O inicio</h3> 
                 
                 <div id="galeriaContainer">
-                    <img id="fotoViagem" src="https://i.imgur.com/vHqQWk4.png" alt="Foto da viagem" style="max-width: 100%; border-radius: 8px;">
+                    <img id="fotoViagem" src="imagens/IMG_5958.PNG" alt="Foto da viagem" style="max-width: 100%; border-radius: 8px;">
+                    
                     <p id="legendaFoto" style="font-size: 1.1em; margin-top: 10px;"></p>
                 </div>
                 
@@ -360,7 +362,8 @@
             function mostrarConfirmacaoArtista(sent, art) {
                 artistaEscolhido = art; 
                 
-                const fotoHeJ = "https://i.imgur.com/u5jJm1f.jpg"; 
+                // --- ATUALIZADO: Link relativo para a foto do H&J ---
+                const fotoHeJ = "imagens/cd_cover.webp"; 
                 let mensagem = "";
 
                 if (art === 'hej') {
@@ -382,7 +385,7 @@
             }
 
 
-            // --- FUNÇÃO TOCARMUSICA (Passo 4) - MODIFICADA ---
+            // --- FUNÇÃO TOCARMUSICA (Passo 4) ---
             function tocarMusica(sent, art) {
                 
                 const link_Feliz_HeJ   = "https://files.catbox.moe/7c10ba.mp3"; 
@@ -410,21 +413,16 @@
                 artistaEscolhido = musicaSelecionada.nome; 
 
                 btnPlayPause.style.display = "inline-block";
-                btnPlayPause.innerText = "Tocar"; // Começa como Tocar
+                btnPlayPause.innerText = "Tocar"; 
                 backgroundMusic.src = musicaSelecionada.url;
                 
-                // REMOVIDO: backgroundMusic.play() daqui
-                // .catch(e => console.error("Erro ao tocar áudio:", e)); 
-
                 mostrarPasso("passoFinal");
                 document.getElementById("passoViagem").style.display = "block";
             }
             
             // --- LÓGICA DO BOTÃO PLAY/PAUSE ---
             btnPlayPause.onclick = function() {
-                 // Verifica se tem uma música carregada antes de tentar tocar/pausar
                  if (!backgroundMusic.src) return; 
-
                 if (backgroundMusic.paused) {
                     backgroundMusic.play().then(() => {
                          btnPlayPause.innerText = "Pausar";
@@ -437,22 +435,23 @@
 
             // --- LÓGICA DA VIAGEM DE FOTOS (PASSO 9) ---
 
+            // --- ATUALIZADO: Lista viagemFotos com links relativos ---
             const viagemFotos = [
-                 { imagem: "https://i.imgur.com/vHqQWk4.png", legenda: "Era uma vez um cara tranquilo, que de repente conheceu uma garota vibrante, espontânea e cheia de vida. Ali começava uma troca de mensagens, longas e incríveis chamadas..", duracao: 12000 },
-                 { imagem: "https://i.imgur.com/8Q7pP1Y.png", legenda: "Logo ela passava de Aderlaine, para Princesa ❤️", duracao: 7000 },
-                 { imagem: "https://i.imgur.com/Z6r1kQp.jpeg", legenda: "Até que, por insistência desse cara, ela aceitar sair com ele. Uma noite simples, mas inesquecível. E o que nenhum deles esperava, é que em tão pouco tempo, se tornaria uma relação tão intensa...", duracao: 12000 },
-                 { imagem: "https://i.imgur.com/k4xLqJm.jpeg", legenda: "Intenso a ponto de rolar uma viagem repentina pra Bahia 😂", duracao: 8000 },
-                 { imagem: "https://i.imgur.com/g0tH4kP.jpeg", legenda: "É claro que o nosso pequeno estava junto", duracao: 8000 },
-                 { imagem: "https://i.imgur.com/xYqZJmC.jpeg", legenda: "E nessa viagem acontece o pedido de namoro, do cara tranquilo, pra garota vibrante, espontânea e cheia de vida ❤️", duracao: 10000 },
-                 { imagem: "https://i.imgur.com/GjN9s4T.jpeg", legenda: "Em tão pouco tempo a garota, tão incrível, se tornou a paixão inesperada desse cara!", duracao: 9000 },
-                 { imagem: "https://i.imgur.com/8xJkP3f.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
-                 { imagem: "https://i.imgur.com/E0nJtQy.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
-                 { imagem: "https://i.imgur.com/f2oKjXw.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
-                 { imagem: "https://i.imgur.com/n6tYfM9.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
-                 { imagem: "https://i.imgur.com/L5E0Jt8.jpeg", legenda: "Juntos, acompanhavam o sentimento louco dele pelo clube do coração 💙", duracao: 8000 },
-                 { imagem: "https://i.imgur.com/kH4JgP1.jpeg", legenda: "Nela, ele encontrava paz", duracao: 8000 },
-                 { imagem: "https://i.imgur.com/vH9X9tT.jpeg", legenda: "Era surpreendido", duracao: 9000 },
-                 { imagem: "https://i.imgur.com/GjT8V8c.jpeg", legenda: "Era surpreendido", duracao: 9000 }
+                 { imagem: "imagens/IMG_5958.PNG", legenda: "Era uma vez um cara tranquilo, que de repente conheceu uma garota vibrante, espontânea e cheia de vida. Ali começava uma troca de mensagens, longas e incríveis chamadas..", duracao: 12000 },
+                 { imagem: "imagens/IMG_5960.PNG", legenda: "Logo ela passava de Aderlaine, para Princesa ❤️", duracao: 7000 },
+                 { imagem: "imagens/755784e8-329e-4c4f-b9d0-ac513537f633.JPEG", legenda: "Até que, por insistência desse cara, ela aceitar sair com ele. Uma noite simples, mas inesquecível. E o que nenhum deles esperava, é que em tão pouco tempo, se tornaria uma relação tão intensa...", duracao: 12000 },
+                 { imagem: "imagens/C11F8CBC-9013-4A31-93F1-36A97363AD7E.JPEG", legenda: "Intenso a ponto de rolar uma viagem repentina pra Bahia 😂", duracao: 8000 },
+                 { imagem: "imagens/CB7392E4-CEA8-4600-86F9-179DE62D89E9.JPEG", legenda: "É claro que o nosso pequeno estava junto", duracao: 8000 },
+                 { imagem: "imagens/4e3e3e47-65fc-4131-9a8f-4c5f0e68d401.JPEG", legenda: "E nessa viagem acontece o pedido de namoro, do cara tranquilo, pra garota vibrante, espontânea e cheia de vida ❤️", duracao: 10000 },
+                 { imagem: "imagens/1e89bb00-8561-4d6a-b85c-a85ff47b4b64.JPEG", legenda: "Em tão pouco tempo a garota, tão incrível, se tornou a paixão inesperada desse cara!", duracao: 9000 },
+                 { imagem: "imagens/Imagem do WhatsApp 2025-10-25 em 18.42.32.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 }, // Banheiro
+                 { imagem: "imagens/3c68ecd5-4e31-4eca-8c2e-efe09c896706.JPEG", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 }, // Espelho
+                 { imagem: "imagens/Imagem do WhatsApp 2025-10-25 em 18.42.31 (1).jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 }, // Pés na água
+                 { imagem: "imagens/10226f6c-bbda-428e-a943-0122d762155b.JPEG", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 }, // Escovas
+                 { imagem: "imagens/53687a31-18cd-474b-be59-6d4c1b4cb4b1.JPEG", legenda: "Juntos, acompanhavam o sentimento louco dele pelo clube do coração 💙", duracao: 8000 }, // Estádio
+                 { imagem: "imagens/Imagem do WhatsApp 2025-10-25 em 18.42.31.jpeg", legenda: "Nela, ele encontrava paz", duracao: 8000 }, // Paz
+                 { imagem: "imagens/IMG_4785.HEIF", legenda: "Era surpreendido", duracao: 9000 }, // Bilhete (Atenção: .HEIF pode não funcionar em todos navegadores)
+                 { imagem: "imagens/Imagem do WhatsApp 2025-10-25 em 18.42.31 (2).jpeg", legenda: "Era surpreendido", duracao: 9000 } // Balões
             ];
 
             const fotoViagem = document.getElementById("fotoViagem");
@@ -465,7 +464,9 @@
                 }
                 const foto = viagemFotos[index];
                 if (index === 0) {
+                     // A primeira foto já está no HTML src, apenas define a legenda
                      legendaFoto.innerText = foto.legenda;
+                     fotoViagem.src = foto.imagem; // Garante que a primeira imagem seja carregada corretamente mesmo se o HTML falhar
                 } else {
                     fotoViagem.src = foto.imagem;
                     legendaFoto.innerText = foto.legenda;
@@ -512,13 +513,11 @@
                  if (mensagemFinalTextoElement) mensagemFinalTextoElement.style.display = 'none';
                  containerBtnFinalizar.style.display = "none";
                  
-                 // TENTA INICIAR A MÚSICA AQUI (se houver uma selecionada)
                  if (backgroundMusic.src && backgroundMusic.paused) { 
                     backgroundMusic.play().then(() => {
                          btnPlayPause.innerText = "Pausar";
                     }).catch(e => { 
                          console.error("Erro ao iniciar música no Início:", e);
-                         // Mesmo se falhar, o botão fica como "Tocar"
                          btnPlayPause.innerText = "Tocar"; 
                     });
                  }
@@ -533,7 +532,6 @@
                 btnMeio.disabled = true;
                 btnFim.disabled = true;
 
-                 // TENTA INICIAR A MÚSICA AQUI (se houver uma selecionada)
                  if (backgroundMusic.src && backgroundMusic.paused) {
                     backgroundMusic.play().then(() => {
                          btnPlayPause.innerText = "Pausar";
