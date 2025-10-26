@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        /* Estilos básicos */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding-top: 50px;
+        }
+        
+        #conteudoOculto {
+            display: none; 
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .passoForm {
+            display: none;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        .mensagemTopo {
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px;
+            font-size: 1em;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        /* Botões de Navegação (Grandes) */
+        button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            background-color: #0B3040;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 8px;
+        }
+        button:hover {
+            background-color: #1a5a7a;
+        }
+        button:disabled { 
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        .btnArtista {
+            display: block; 
+            width: 80%;
+            margin: 10px auto; 
+        }
+        
+        .navDireita {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        /* Estilo para o botão Play/Pause */
+        #btnPlayPause {
+            display: none; 
+            padding: 5px 12px;
+            font-size: 0.9em;
+            margin-left: 10px; 
+            background-color: #6c757d; 
+            vertical-align: middle; 
+        }
+        #btnPlayPause:hover {
+            background-color: #5a6268;
+        }
+        
+        /* Container para alinhar título e botão */
+        .tituloContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; 
+            gap: 5px; 
+        }
+
+        /* Estilo para a foto de confirmação */
+        #fotoArtistaConfirmacao {
+            max-width: 90%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        #mensagemArtistaConfirmacao {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            padding: 10px;
+        }
+
+        /* Estilo para a mensagem final da viagem */
+        #mensagemFinalTexto {
+            text-align: left;
+            padding: 15px;
+            line-height: 1.6;
+            color: #444;
+            font-size: 1.1em;
+            margin-bottom: 20px; 
+        }
+
+        /* Estilo para o campo de texto da mensagem */
+        #campoMensagemDespedida {
+            width: 90%;
+            height: 100px;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Estilo para a mensagem final de término */
+        #mensagemFim {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+            padding: 30px 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="conteudoOculto">
+
+        <audio id="backgroundMusic" loop></audio>
+
+        <p id="mensagemSenha" class="mensagemTopo">A senha foi muito fácil né? kkk</p>
+
+        <div id="passoMusica" class="passoForm">
+            <h1><strong>Que tal uma música?</strong></h1>
+            <button id="btnMusicaSim">Sim</button>
+            <button id="btnMusicaNao">Não</button>
+        </div>
+
+        <div id="passoSentimento" class="passoForm">
+            <h2>Feliz ou Triste?</h2>
+            <input type="text" id="inputSentimento" placeholder="Digite sua resposta...">
+            <button id="btnSentimentoOK">OK</button>
+        </div>
+
+        <div id="passoArtista" class="passoForm">
+            <p id="mensagemSentimento" style="font-size: 1.2em;"></p>
+            <h3>Escolha o artista:</h3>
+            <button class="btnArtista" data-artista="hej">Henrique e Juliano</button>
+            <button class="btnArtista" data-artista="znec">Zé Neto e Cristiano</button>
+            <button class="btnArtista" data-artista="gm">Gustavo Mioto</button>
+        </div>
+
+        <div id="passoConfirmacaoArtista" class="passoForm" style="text-align: center;">
+            <img id="fotoArtistaConfirmacao" src="" alt="Artista">
+            <p id="mensagemArtistaConfirmacao"></p>
+        </div>
+
+
+        <div id="passoFinal" class="passoForm">
+            
+            <div class="tituloContainer">
+                <h2 id="tituloMusica"></h2>
+                <button id="btnPlayPause">Pausar</button>
+            </div>
+
+            <div id="passoViagem" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 20px;">
+                <p id="pViagem" style="font-size: 1.2em;">Enquanto curte a música, vamos fazer uma viagem rápida?!</p>
+                <button id="btnInicio">Início</button>
+                <button id="btnMeio">Meio</button>
+                <button id="btnFim">Fim</button>
+                
+                <p id="mensagemViagem" style="display: none; color: #555; font-weight: bold; margin-top: 15px;"></p>
+            </div>
+
+            <div id="passoInicioViagem" style="display: none; margin-top: 20px;">
+                <h3 id="tituloInicioViagem" style="font-weight: bold;">O inicio</h3> 
+                
+                <div id="galeriaContainer">
+                    <img id="fotoViagem" src="https://i.imgur.com/vHqQWk4.png" alt="Foto da viagem" style="max-width: 100%; border-radius: 8px;">
+                    <p id="legendaFoto" style="font-size: 1.1em; margin-top: 10px;"></p>
+                </div>
+                
+                <div id="containerBtnFinalizar" style="display: none; margin-top: 20px;">
+                     <button id="btnFinalizar">FINALIZAR</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="passoEscolhaDespedida" class="passoForm" style="padding-top: 20px;">
+             <h3>Como deseja prosseguir?</h3>
+             <button id="btnComMensagem">Mensagem de despedida</button>
+             <button id="btnSemMensagem">Fim, sem despedida</button>
+        </div>
+
+        <div id="passoEnviarMensagem" class="passoForm" style="padding-top: 20px;">
+             <p>Escreva sua mensagem:</p>
+             <textarea id="campoMensagemDespedida"></textarea><br>
+             <button id="btnEnviarMensagem">Enviar</button>
+        </div>
+
+        <div id="passoFim" class="passoForm">
+             <p id="mensagemFim"></p>
+        </div>
+
+    </div>
+
+    <script>
+        // Inicializa o EmailJS - ATIVADO
+         (function(){
+            emailjs.init("jcBWxn7iOyrx1TESh"); // Sua Public Key inserida
+         })();
+
+        window.onload = function() {
+            
+            // --- PARTE 1: LÓGICA DA SENHA ---
+            const senhaCorreta = "culpa sua ou graças a você?";
+            const mensagemPrompt = "Não sabia se te encontraria aqui. Mas se você veio, saberá a senha.";
+            let senhaDigitada = "";
+
+            do {
+                senhaDigitada = prompt(mensagemPrompt);
+                if (senhaDigitada === null) {
+                    document.body.innerHTML = "<h1>Acesso negado.</h1>";
+                    return; 
+                }
+                if (senhaDigitada.toLowerCase() !== senhaCorreta) {
+                    alert("Senha incorreta. Tente novamente.");
+                }
+            } while (senhaDigitada.toLowerCase() !== senhaCorreta);
+
+            document.getElementById("conteudoOculto").style.display = "block";
+            
+            // --- PARTE 2: LÓGICA DO FLUXO ---
+            let sentimento = "";
+            let artistaEscolhido = ""; 
+            
+            // Referências aos elementos
+            const passoMusica = document.getElementById("passoMusica");
+            const passoSentimento = document.getElementById("passoSentimento");
+            const passoArtista = document.getElementById("passoArtista");
+            const passoFinal = document.getElementById("passoFinal");
+            const mensagemSenha = document.getElementById("mensagemSenha");
+            const btnMusicaSim = document.getElementById("btnMusicaSim");
+            const btnMusicaNao = document.getElementById("btnMusicaNao");
+            const btnSentimentoOK = document.getElementById("btnSentimentoOK");
+            const inputSentimento = document.getElementById("inputSentimento");
+            const mensagemSentimento = document.getElementById("mensagemSentimento");
+            const botoesArtista = document.querySelectorAll(".btnArtista"); 
+            const tituloMusica = document.getElementById("tituloMusica");
+            const backgroundMusic = document.getElementById("backgroundMusic");
+            const pViagem = document.getElementById("pViagem");
+            const btnInicio = document.getElementById("btnInicio");
+            const btnMeio = document.getElementById("btnMeio");
+            const btnFim = document.getElementById("btnFim");
+            const mensagemViagem = document.getElementById("mensagemViagem");
+            const passoInicioViagem = document.getElementById("passoInicioViagem");
+            const btnPlayPause = document.getElementById("btnPlayPause");
+
+            // --- REFERÊNCIAS (Passo 3.5) ---
+            const passoConfirmacaoArtista = document.getElementById("passoConfirmacaoArtista");
+            const fotoArtistaConfirmacao = document.getElementById("fotoArtistaConfirmacao");
+            const mensagemArtistaConfirmacao = document.getElementById("mensagemArtistaConfirmacao");
+
+            // --- REFERÊNCIAS (Passo 9 - Galeria, Título e Final) ---
+            const galeriaContainer = document.getElementById("galeriaContainer");
+            const tituloInicioViagem = document.getElementById("tituloInicioViagem");
+            const containerBtnFinalizar = document.getElementById("containerBtnFinalizar"); 
+            const btnFinalizar = document.getElementById("btnFinalizar"); 
+            let mensagemFinalTextoElement = null; 
+
+            // --- NOVAS REFERÊNCIAS (Passos Finais) ---
+            const passoEscolhaDespedida = document.getElementById("passoEscolhaDespedida");
+            const btnComMensagem = document.getElementById("btnComMensagem");
+            const btnSemMensagem = document.getElementById("btnSemMensagem");
+            const passoEnviarMensagem = document.getElementById("passoEnviarMensagem");
+            const campoMensagemDespedida = document.getElementById("campoMensagemDespedida");
+            const btnEnviarMensagem = document.getElementById("btnEnviarMensagem");
+            const passoFim = document.getElementById("passoFim");
+            const mensagemFim = document.getElementById("mensagemFim");
+
+
+            // Função para controlar a visibilidade dos passos
+            function mostrarPasso(passoId) {
+                document.querySelectorAll('.passoForm').forEach(passo => {
+                    passo.style.display = "none";
+                });
+                if (['passoInicioViagem', 'passoEscolhaDespedida', 'passoEnviarMensagem', 'passoFim'].includes(passoId)) {
+                     document.getElementById('passoFinal').style.display = 'block'; 
+                } else if (passoId === 'passoFinal') { 
+                     document.getElementById('passoFinal').style.display = 'block'; 
+                }
+                document.getElementById(passoId).style.display = "block";
+            }
+            
+            mostrarPasso("passoMusica");
+
+            // Lógica do Passo 1 (Música?)
+            btnMusicaSim.onclick = function() {
+                mensagemSenha.style.display = "none";
+                mostrarPasso("passoSentimento");
+            };
+            
+            btnMusicaNao.onclick = function() {
+                mensagemSenha.style.display = "none";
+                tituloMusica.innerText = "Tudo bem, sem música então.";
+                pViagem.innerText = "Vamos fazer uma viagem rápida?!"; 
+                btnPlayPause.style.display = "none"; 
+                mostrarPasso("passoFinal");
+                document.getElementById("passoViagem").style.display = "block"; 
+            };
+
+            // Lógica do Passo 2 (Sentimento)
+            btnSentimentoOK.onclick = function() {
+                let resposta = inputSentimento.value.trim().toLowerCase();
+                if (resposta === "feliz" || resposta === "triste") {
+                     sentimento = resposta; 
+                     mensagemSentimento.innerText = (sentimento === "feliz") ? "Como eu que esperava 😅" : "Não é bem a resposta que eu esperava 😅";
+                     mostrarPasso("passoArtista");
+                } else {
+                    alert("Por favor, responda apenas com 'Feliz' ou 'Triste'.");
+                }
+            };
+            
+            // Lógica do Passo 3 (Artistas)
+            botoesArtista.forEach(function(botao) {
+                botao.onclick = function() {
+                    const artista = botao.dataset.artista;
+                    mostrarConfirmacaoArtista(sentimento, artista);
+                };
+            });
+
+            // --- NOVA FUNÇÃO (Passo 3.5) ---
+            function mostrarConfirmacaoArtista(sent, art) {
+                artistaEscolhido = art; 
+                
+                const fotoHeJ = "https://i.imgur.com/u5jJm1f.jpg"; 
+                let mensagem = "";
+
+                if (art === 'hej') {
+                    mensagem = "Estranho seria se escolhesse outro né?";
+                } else { 
+                    mensagem = "Não foi de H&J? É vc mesmo? 🤔";
+                }
+
+                fotoArtistaConfirmacao.src = fotoHeJ;
+                mensagemArtistaConfirmacao.innerText = mensagem;
+                
+                mostrarPasso("passoConfirmacaoArtista");
+
+                const tempoDeEsperaConfirmacao = 4500; 
+                
+                setTimeout(function() {
+                    tocarMusica(sent, art);
+                }, tempoDeEsperaConfirmacao);
+            }
+
+
+            // --- FUNÇÃO TOCARMUSICA (Passo 4) ---
+            function tocarMusica(sent, art) {
+                
+                // --- ATENÇÃO: SUBSTITUA ESTES LINKS ---
+                const link_Feliz_HeJ   = "https://files.catbox.moe/7c10ba.mp3"; 
+                const link_Feliz_ZNeC  = "https://files.catbox.moe/ylc4t4.mp3"; 
+                const link_Feliz_GM    = "https://files.catbox.moe/6coejm.mp3"; 
+                const link_Triste_HeJ  = "https://files.catbox.moe/kdqpav.mp3"; 
+                const link_Triste_ZNeC = "https://files.catbox.moe/rv4a5o.mp3"; 
+                const link_Triste_GM   = "https://files.catbox.moe/b7q7sh.mp3"; 
+
+                const musicas = {
+                    "feliz": {
+                        "hej": { nome: "Henrique e Juliano", nomeCompleto: "VEM PRA MINHA VIDA - HENRIQUE E JULIANO", url: link_Feliz_HeJ }, 
+                        "znec": { nome: "Zé Neto e Cristiano", nomeCompleto: "UM ANO DE NOIVADO - ZÉ NETO E CRISTIANO", url: link_Feliz_ZNeC },
+                        "gm": { nome: "Gustavo Mioto", nomeCompleto: "CONTRAMÃO - GUSTAVO MIOTO", url: link_Feliz_GM }
+                    },
+                    "triste": {
+                        "hej": { nome: "Henrique e Juliano", nomeCompleto: "CARTA ABERTA - HENRIQUE E JULIANO", url: link_Triste_HeJ },
+                        "znec": { nome: "Zé Neto e Cristiano", nomeCompleto: "POR NOSSOS FILHOS - ZÉ NETO E CRISTIANO", url: link_Triste_ZNeC },
+                        "gm": { nome: "Gustavo Mioto", nomeCompleto: "COM OU SEM MIM - GUSTAVO MIOTO", url: link_Triste_GM }
+                    }
+                };
+                
+                const musicaSelecionada = musicas[sent][art];
+                tituloMusica.innerText = musicaSelecionada.nomeCompleto; // Mostra nome completo na tela
+                artistaEscolhido = musicaSelecionada.nome; // Guarda nome simplificado para email
+
+                btnPlayPause.style.display = "inline-block";
+                btnPlayPause.innerText = "Pausar";
+                backgroundMusic.src = musicaSelecionada.url;
+                backgroundMusic.play()
+                    .catch(e => console.error("Erro ao tocar áudio:", e)); 
+
+                mostrarPasso("passoFinal");
+                document.getElementById("passoViagem").style.display = "block";
+            }
+            
+            // --- LÓGICA DO BOTÃO PLAY/PAUSE ---
+            btnPlayPause.onclick = function() {
+                if (backgroundMusic.paused) {
+                    backgroundMusic.play();
+                    btnPlayPause.innerText = "Tocar";
+                } else {
+                    backgroundMusic.pause();
+                    btnPlayPause.innerText = "Pausar";
+                }
+            };
+
+            // --- LÓGICA DA VIAGEM DE FOTOS (PASSO 9) ---
+
+            const viagemFotos = [
+                 { imagem: "https://i.imgur.com/vHqQWk4.png", legenda: "Era uma vez um cara tranquilo, que de repente conheceu uma garota vibrante, espontânea e cheia de vida. Ali começava uma troca de mensagens, longas e incríveis chamadas..", duracao: 12000 },
+                 { imagem: "https://i.imgur.com/8Q7pP1Y.png", legenda: "Logo ela passava de Aderlaine, para Princesa ❤️", duracao: 7000 },
+                 { imagem: "https://i.imgur.com/Z6r1kQp.jpeg", legenda: "Até que, por insistência desse cara, ela aceitar sair com ele. Uma noite simples, mas inesquecível. E o que nenhum deles esperava, é que em tão pouco tempo, se tornaria uma relação tão intensa...", duracao: 12000 },
+                 { imagem: "https://i.imgur.com/k4xLqJm.jpeg", legenda: "Intenso a ponto de rolar uma viagem repentina pra Bahia 😂", duracao: 8000 },
+                 { imagem: "https://i.imgur.com/g0tH4kP.jpeg", legenda: "É claro que o nosso pequeno estava junto", duracao: 8000 },
+                 { imagem: "https://i.imgur.com/xYqZJmC.jpeg", legenda: "E nessa viagem acontece o pedido de namoro, do cara tranquilo, pra garota vibrante, espontânea e cheia de vida ❤️", duracao: 10000 },
+                 { imagem: "https://i.imgur.com/GjN9s4T.jpeg", legenda: "Em tão pouco tempo a garota, tão incrível, se tornou a paixão inesperada desse cara!", duracao: 9000 },
+                 { imagem: "https://i.imgur.com/8xJkP3f.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
+                 { imagem: "https://i.imgur.com/E0nJtQy.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
+                 { imagem: "https://i.imgur.com/f2oKjXw.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
+                 { imagem: "https://i.imgur.com/n6tYfM9.jpeg", legenda: "Viviam e aproveitavam cada segundo, cada momento juntos", duracao: 7000 },
+                 { imagem: "https://i.imgur.com/L5E0Jt8.jpeg", legenda: "Juntos, acompanhavam o sentimento louco dele pelo clube do coração 💙", duracao: 8000 },
+                 { imagem: "https://i.imgur.com/kH4JgP1.jpeg", legenda: "Nela, ele encontrava paz", duracao: 8000 },
+                 { imagem: "https://i.imgur.com/vH9X9tT.jpeg", legenda: "Era surpreendido", duracao: 9000 },
+                 { imagem: "https://i.imgur.com/GjT8V8c.jpeg", legenda: "Era surpreendido", duracao: 9000 }
+            ];
+
+            const fotoViagem = document.getElementById("fotoViagem");
+            const legendaFoto = document.getElementById("legendaFoto");
+
+            function mostrarFoto(index) {
+                if (index >= viagemFotos.length) {
+                    fimDaViagem();
+                    return;
+                }
+                const foto = viagemFotos[index];
+                if (index === 0) {
+                     legendaFoto.innerText = foto.legenda;
+                } else {
+                    fotoViagem.src = foto.imagem;
+                    legendaFoto.innerText = foto.legenda;
+                }
+                setTimeout(() => mostrarFoto(index + 1), foto.duracao);
+            }
+
+            function fimDaViagem() {
+                galeriaContainer.style.display = "none"; 
+                tituloInicioViagem.style.display = "none";
+
+                if (!mensagemFinalTextoElement) {
+                     mensagemFinalTextoElement = document.createElement("p");
+                     mensagemFinalTextoElement.id = "mensagemFinalTexto"; 
+                     mensagemFinalTextoElement.innerHTML = `
+                        São tantos momentos, sorrisos e lembranças que poderia render horas de slides aqui 😅.<br>
+                        Mas só queria mesmo lembrar que nem sempre enfrentamos problemas, nem sempre foi tristeza.<br>
+                        Pelo contrário, vivemos momentos incríveis e inesquecíveis, que eu sempre vou lembrar.<br><br>
+                        Vejo que falhei em vários momentos.. enfrentei muita coisa calado, inseguranças e auto cobranças, por exemplo.<br>
+                        E em meio a tudo isso, as coisas acabaram mudando, mudando a gente...<br>
+                        Apesar disso, eu tenho muitas perguntas sem respostas, e uma delas é porque deixamos tanto sentimento e tantas alegrias se perderem entre nós...<br><br>
+                        Eu fiz poucas promessas na minha vida. Uma delas? Que eu iria lutar com todas as minhas forças para não perder a mulher da minha vida, quando a encontrasse.<br>
+                        Apesar dos pesares, eu acredito ter lutado, muito.<br>
+                        E apesar de hoje ter que encarar uma realidade bem diferente do que gostaria, apesar de não ter o final feliz que gostaria, acredito ter encontrado, em vc, a mulher da minha vida.<br><br>
+                        Isso com certeza é meio confuso, bem com cara de declaração clichê.. mas tá mais pra uma despedida.. como último ato de amor, concretizo aqui nosso Adeus....<br><br>
+                        Se fazer com que alguém te ame pra valer fosse um esporte, vc sairia daqui com a medalha de ouro kkkk.<br><br>
+                        Sempre irei lembrar dos bons momentos, pois aprendi muito com eles e fui muito feliz com eles.<br>
+                        Espero que essa felicidade continue presente na sua vida.<br><br>
+                        Sempre vou torcer por vc. SE CUIDA!
+                    `;
+                    passoInicioViagem.insertBefore(mensagemFinalTextoElement, containerBtnFinalizar); 
+                }
+                mensagemFinalTextoElement.style.display = 'block'; 
+                containerBtnFinalizar.style.display = "block"; 
+            }
+            
+            // --- LÓGICA DOS PASSOS 6-9 (Viagem) ---
+            
+            function mostrarInicioViagem() {
+                passoViagem.style.display = "none"; 
+                passoInicioViagem.style.display = "block"; 
+                galeriaContainer.style.display = "block"; 
+                tituloInicioViagem.style.display = "block";
+                 if (mensagemFinalTextoElement) mensagemFinalTextoElement.style.display = 'none';
+                 containerBtnFinalizar.style.display = "none";
+                mostrarFoto(0); 
+            }
+
+            function mostrarAvisoApressada() {
+                mensagemViagem.innerText = "Vejo que ainda é aquela garota apressada 😅. Vamos do inicio 😁";
+                mensagemViagem.style.display = "block"; 
+                btnInicio.disabled = true;
+                btnMeio.disabled = true;
+                btnFim.disabled = true;
+                setTimeout(mostrarInicioViagem, 4500); 
+            }
+
+            btnInicio.onclick = mostrarInicioViagem;
+            btnMeio.onclick = mostrarAvisoApressada;
+            btnFim.onclick = mostrarAvisoApressada;
+
+            // --- FUNÇÃO PARA ENVIAR DADOS POR EMAIL (REAL) ---
+            function enviarEmailComDados(mensagemDespedida) {
+                const dadosParaEnviar = {
+                    sentimento: sentimento || "Não aplicável", 
+                    artista: artistaEscolhido || "Nenhum", 
+                    mensagem: mensagemDespedida
+                };
+
+                // Comentários da simulação foram removidos/comentados
+                // console.log("--- DADOS QUE SERIAM ENVIADOS POR EMAIL ---");
+                // console.log("Sentimento:", dadosParaEnviar.sentimento);
+                // console.log("Artista Escolhido:", dadosParaEnviar.artista);
+                // console.log("Mensagem Final:", dadosParaEnviar.mensagem);
+                // console.log("-----------------------------------------");
+                
+                // --- INTEGRAÇÃO REAL COM EMAILJS - ATIVADA ---
+                const templateParams = {
+                    sentimento: dadosParaEnviar.sentimento,
+                    artista: dadosParaEnviar.artista,
+                    mensagem: dadosParaEnviar.mensagem,
+                };
+
+                // Seus IDs inseridos
+                const serviceID = 'service_html'; 
+                const templateID = 'template_html';
+
+                emailjs.send(serviceID, templateID, templateParams)
+                    .then(function(response) {
+                       console.log('Email enviado com sucesso!', response.status, response.text);
+                       // Não informe o usuário, continue silenciosamente
+                    }, function(error) {
+                       console.error('Falha ao enviar email:', error);
+                       // Mesmo em caso de erro, não informe o usuário
+                    });
+                // -----------------------------------------------------------------------------
+            }
+
+            // --- LÓGICA DOS PASSOS FINAIS ---
+
+            btnFinalizar.onclick = function() {
+                 if (mensagemFinalTextoElement) mensagemFinalTextoElement.style.display = 'none'; 
+                 containerBtnFinalizar.style.display = 'none'; 
+                 mostrarPasso('passoEscolhaDespedida'); 
+            };
+
+            btnComMensagem.onclick = function() {
+                 mostrarPasso('passoEnviarMensagem');
+            };
+
+            btnSemMensagem.onclick = function() {
+                 enviarEmailComDados("Fim, sem despedida"); // Envia os dados
+                 mensagemFim.innerText = "Você fez sua escolha, chegamos ao fim.";
+                 mostrarPasso('passoFim');
+            };
+
+            btnEnviarMensagem.onclick = function() {
+                 const mensagemDigitada = campoMensagemDespedida.value || "Nenhuma mensagem escrita."; 
+                 enviarEmailComDados(mensagemDigitada); // Envia os dados
+                 mensagemFim.innerText = "Chegamos ao fim.";
+                 mostrarPasso('passoFim');
+            };
+
+        };
+    </script>
+
+</body>
+</html>
